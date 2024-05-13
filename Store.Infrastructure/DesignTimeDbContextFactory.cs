@@ -18,7 +18,7 @@ namespace Store.Infrastructure
 			
 
 			var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
-			var connectionString = "Server=.;Database=StoreMOJ;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False";
+			var connectionString = "Server=.;Database=StoreMOJ;Trusted_Connection=true;encrypt=false;MultipleActiveResultSets=true;TrustServerCertificate=True";
 			builder.UseSqlServer(connectionString);
 
 			return new ApplicationDbContext(builder.Options);

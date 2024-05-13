@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Store.Domain.Entities
+namespace Store.Application.Contracts.Unit.Dtos
 {
-    public class Supplier
+    public class UnitDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<Product> Products { get; set; }
     }
 }
