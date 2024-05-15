@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.IdentityModel.Tokens;
 using Store.Domain.Entities;
 using Store.Infrastructure.IRepositories;
 using System;
@@ -23,9 +25,17 @@ namespace Store.Infrastructure.Repositories
 			return await _context.Products.FindAsync(id);
 		}
 
-		public async Task<IEnumerable<Product>> GetAllProductsAsync()
+		public async Task<IEnumerable<Product>> GetAllProductsAsync(int page, int pageSize, string searchQuery)
 		{
-			return await _context.Products.ToListAsync();
+            IQueryable<Product> query = _context.Products;
+            if (!string.IsNullOrEmpty(searchQuery))
+			{
+                query= query.Where(x =>
+				x.Name.Contains(searchQuery));
+            }
+
+
+            return await query.Skip((page-1)*pageSize).Take(pageSize).ToListAsync();
 		}
 
 		public async Task AddProductAsync(Product product)

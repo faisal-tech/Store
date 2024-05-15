@@ -17,6 +17,7 @@ builder.Services.AddScoped<IUnitAppService, UnitAppService>();
 builder.Services.AddScoped<IProductAppService, ProductAppService>();
 builder.Services.AddScoped<ISupplierAppService, SupplierAppService>();
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

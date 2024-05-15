@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Store.Application.Contracts.Dtos;
 using Store.Application.Contracts.Product;
 using Store.Application.Contracts.Product.Dtos;
+using Store.Domain.Dtos;
+using Store.Domain.Entities;
 
 namespace Store.Api.Controllers
 {
@@ -17,43 +20,56 @@ namespace Store.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProduct(int id)
+        public async Task<ApiResponseDto<ProductDto>> GetProduct(int id)
         {
             var product = await _productAppService.GetProductByIdAsync(id);
             if (product == null)
-                return NotFound();
+                throw new InvalidOperationException("Product was not found");
 
-            return Ok(product);
+            return new ApiResponseDto<ProductDto>().IsSuccess(product);
         }
 
-        [HttpGet]
-        public async Task<JsonResult> GetAllProducts()
+        [HttpPost("ProductsList")]
+        public async Task<ApiResponseDto<List<ProductDto>>> ProductsList(SearchFilterDto request)
         {
-            var products = await _productAppService.GetAllProductsAsync();
-            return new JsonResult(products);
+            //throw new InvalidOperationException("This is a test exception.");
+            var products = await _productAppService.GetAllProductsAsync(request);
+            return new ApiResponseDto<List<ProductDto>>().IsSuccess(products);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto createProductDto)
+        public async Task<ApiResponseDto<bool>> CreateProduct([FromBody] CreateProductDto createProductDto)
         {
-            var product = await _productAppService.CreateProductAsync(createProductDto);
-            return Ok();
-        }
+            var isSaved = await _productAppService.CreateProductAsync(createProductDto);
+            if (isSaved == false)
+            {
+                throw new InvalidOperationException("Internal Server Error");
+            }
+            return new ApiResponseDto<bool>().IsSuccess(isSaved);
+        }   
 
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct( [FromBody] UpdateProductDto updateProductDto)
+        public async Task<ApiResponseDto<bool>> UpdateProduct( [FromBody] UpdateProductDto updateProductDto)
         {
-            var updatedProduct = await _productAppService.UpdateProductAsync( updateProductDto);
-     
+            var isUpdated = await _productAppService.UpdateProductAsync( updateProductDto);
+            if (isUpdated == false)
+            {
+                throw new InvalidOperationException("Internal Server Error");
+            }
 
-            return Ok(updatedProduct);
+            return new ApiResponseDto<bool>().IsSuccess(isUpdated);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<ApiResponseDto<bool>> DeleteProduct(int id)
         {
-            await _productAppService.DeleteProductAsync(id);
-            return NoContent();
+            var isDeleted = await _productAppService.DeleteProductAsync(id);
+
+            if (isDeleted == false)
+            {
+                throw new InvalidOperationException("Internal Server Error");
+            }
+            return new ApiResponseDto<bool>().IsSuccess(isDeleted);
         }
     }
 }

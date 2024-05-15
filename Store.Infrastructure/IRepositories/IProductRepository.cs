@@ -10,7 +10,7 @@ namespace Store.Infrastructure.IRepositories
 	public interface IProductRepository
 	{
 		Task<Product> GetProductByIdAsync(int id);
-		Task<IEnumerable<Product>> GetAllProductsAsync();
+		Task<IEnumerable<Product>> GetAllProductsAsync(int page, int pageSize,string searchQuery);
 		Task AddProductAsync(Product product);
 		Task UpdateProductAsync(Product product);
 		Task DeleteProductAsync(int id);

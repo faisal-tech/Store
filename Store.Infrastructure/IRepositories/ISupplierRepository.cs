@@ -10,7 +10,7 @@ namespace Store.Infrastructure.IRepositories
 	public interface ISupplierRepository
 	{
 		Task<Supplier> GetSupplierByIdAsync(int id);
-		Task<IEnumerable<Supplier>> GetAllSuppliersAsync();
+		Task<IEnumerable<Supplier>> GetAllSuppliersAsync(int page, int pageSize, string searchQuery);
 		Task AddSupplierAsync(Supplier supplier);
 		Task UpdateSupplierAsync(Supplier supplier);
 		Task DeleteSupplierAsync(int id);

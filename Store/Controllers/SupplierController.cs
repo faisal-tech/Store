@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Store.Application.Contracts.Supplier.Dtos;
 using Store.Application.Contracts.Supplier;
+using Store.Application.Contracts.Dtos;
+using Store.Domain.Dtos;
+using Store.Domain.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Store.Api.Controllers
 {
@@ -17,44 +21,56 @@ namespace Store.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetSupplier(int id)
+        public async Task<ApiResponseDto<SupplierDto>> GetSupplier(int id)
         {
             var supplier = await _supplierAppService.GetSupplierByIdAsync(id);
             if (supplier == null)
-                return NotFound();
+                throw new InvalidOperationException("Supplier was not found");
 
-            return Ok(supplier);
+            return new ApiResponseDto<SupplierDto>().IsSuccess(supplier);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllSuppliers()
+        public async Task<ApiResponseDto<List<SupplierDto>>> GetAllSuppliers(SearchFilterDto request)
         {
-            var suppliers = await _supplierAppService.GetAllSuppliersAsync();
-            return Ok(suppliers);
+            var suppliers = await _supplierAppService.GetAllSuppliersAsync(request);
+            return new ApiResponseDto<List<SupplierDto>>().IsSuccess(suppliers);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateSupplier([FromBody] CreateSupplierDto createSupplierDto)
+        public async Task<ApiResponseDto<bool>> CreateSupplier([FromBody] CreateSupplierDto createSupplierDto)
         {
-            var supplier = await _supplierAppService.CreateSupplierAsync(createSupplierDto);
-            return Ok(supplier);
+            var isCreated = await _supplierAppService.CreateSupplierAsync(createSupplierDto);
+            if (isCreated == false)
+            {
+                throw new InvalidOperationException("Internal Server Error");
+            }
+            return new ApiResponseDto<bool>().IsSuccess(isCreated);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateSupplier([FromBody] UpdateSupplierDto updateSupplierDto)
+        public async Task<ApiResponseDto<bool>> UpdateSupplier([FromBody] UpdateSupplierDto updateSupplierDto)
         {
-            var updatedSupplier = await _supplierAppService.UpdateSupplierAsync(updateSupplierDto);
-            if (updatedSupplier == null)
-                return NotFound();
+            var isUpdated = await _supplierAppService.UpdateSupplierAsync(updateSupplierDto);
+            if (isUpdated == false)
+            {
+                throw new InvalidOperationException("Internal Server Error");
+            }
 
-            return Ok(updatedSupplier);
+            return new ApiResponseDto<bool>().IsSuccess(isUpdated);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSupplier(int id)
+        public async Task<ApiResponseDto<bool>> DeleteSupplier(int id)
         {
-            await _supplierAppService.DeleteSupplierAsync(id);
-            return NoContent();
+            var isDeleted = await _supplierAppService.DeleteSupplierAsync(id);
+            if (isDeleted == false)
+            {
+                throw new InvalidOperationException("Internal Server Error");
+            }
+
+            return new ApiResponseDto<bool>().IsSuccess(isDeleted);
+
         }
     }
 }

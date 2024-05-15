@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Store.Infrastructure.IRepositories;
 using Store.Domain.Entities;
 using Store.Domain.Lookups;
+using Azure.Core;
+using Store.Application.Contracts.Dtos;
 
 namespace Store.Application.Implementation
 {
@@ -34,9 +36,9 @@ namespace Store.Application.Implementation
             };
         }
 
-        public async Task<List<ProductDto>> GetAllProductsAsync()
+        public async Task<List<ProductDto>> GetAllProductsAsync(SearchFilterDto request)
         {
-            var products = await _productRepository.GetAllProductsAsync();
+            var products = await _productRepository.GetAllProductsAsync(request.Page,request.PageSize,request.SearchQuery) ;
             return products.Select(x=>new ProductDto
             {
                 Name = x.Name,

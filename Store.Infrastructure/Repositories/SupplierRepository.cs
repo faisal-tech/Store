@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
 using Store.Domain.Entities;
 using Store.Infrastructure.IRepositories;
 using System;
@@ -23,9 +24,17 @@ namespace Store.Infrastructure.Repositories
 			return await _context.Suppliers.FindAsync(id);
 		}
 
-		public async Task<IEnumerable<Supplier>> GetAllSuppliersAsync()
+		public async Task<IEnumerable<Supplier>> GetAllSuppliersAsync(int page, int pageSize, string searchQuery)
 		{
-			return await _context.Suppliers.ToListAsync();
+            IQueryable<Supplier> query =_context.Suppliers;
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(x =>
+                x.Name.Contains(searchQuery));
+            }
+
+
+            return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 		}
 
 		public async Task AddSupplierAsync(Supplier supplier)

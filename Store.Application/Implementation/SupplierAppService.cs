@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Store.Application.Contracts.Dtos;
 
 namespace Store.Application.Implementation
 {
@@ -29,9 +30,9 @@ namespace Store.Application.Implementation
             };
         }
 
-        public async Task<List<SupplierDto>> GetAllSuppliersAsync()
+        public async Task<List<SupplierDto>> GetAllSuppliersAsync(SearchFilterDto request)
         {
-            var suppliers = await _supplierRepository.GetAllSuppliersAsync();
+            var suppliers = await _supplierRepository.GetAllSuppliersAsync(request.Page,request.PageSize,request.SearchQuery);
             return suppliers.Select(x => new SupplierDto
             {
                 Id = x.Id,
