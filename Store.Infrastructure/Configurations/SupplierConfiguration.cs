@@ -17,6 +17,12 @@ namespace Store.Infrastructure.Configurations
 			builder.HasKey(s => s.Id);
 
 			builder.Property(s => s.Name).IsRequired().HasMaxLength(200);
-		}
-	}
+            builder.HasMany(s=> s.Products)
+               .WithOne(p => p.Supplier)
+               .HasForeignKey(p=>p.SupplierId);
+
+            builder.HasIndex(p => p.Name)
+                 .HasName("Index_Name");
+        }
+    }
 }

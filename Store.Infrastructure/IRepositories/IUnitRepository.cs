@@ -9,10 +9,6 @@ namespace Store.Infrastructure.IRepositories
 {
 	public interface IUnitRepository
 	{
-		Task<Unit> GetUnitByIdAsync(int id);
-		Task<IEnumerable<Unit>> GetAllUnitsAsync();
-		Task AddUnitAsync(Unit unit);
-		Task UpdateUnitAsync(Unit unit);
-		Task DeleteUnitAsync(int id);
+		Task<IEnumerable<Unit>> GetAllUnitsAsync();	
 	}
 }

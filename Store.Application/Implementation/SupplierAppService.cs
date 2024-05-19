@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Store.Application.Contracts.Dtos;
+using Store.Domain.Dtos;
+using Store.Application.Contracts.Dtos.Statistics;
 
 namespace Store.Application.Implementation
 {
@@ -29,15 +31,22 @@ namespace Store.Application.Implementation
                 Name= supplier.Name,
             };
         }
-
-        public async Task<List<SupplierDto>> GetAllSuppliersAsync(SearchFilterDto request)
+        
+        public async Task<PagingDto<SupplierDto>> GetAllSuppliersAsync(SearchFilterDto request)
         {
-            var suppliers = await _supplierRepository.GetAllSuppliersAsync(request.Page,request.PageSize,request.SearchQuery);
-            return suppliers.Select(x => new SupplierDto
+            var response = await _supplierRepository.GetAllSuppliersAsync(request.Offset,request.PageSize,request.SearchQuery,request.OrderBy);
+            var items = response.Items.Select(x => new SupplierDto
             {
                 Id = x.Id,
                 Name = x.Name,
+                ProductCount=x.Products.Count,
             }).ToList();
+
+            return new PagingDto<SupplierDto>
+            {
+                Items = items,
+                ItemsCount = response.ItemsCount,
+            };
         }
 
         public async Task<bool> CreateSupplierAsync(CreateSupplierDto input)
@@ -53,6 +62,7 @@ namespace Store.Application.Implementation
         {
             await _supplierRepository.UpdateSupplierAsync(new Supplier
             {
+                Id=input.Id,
                 Name=input.Name,
             });
             return true;
@@ -62,6 +72,18 @@ namespace Store.Application.Implementation
         {
             await _supplierRepository.DeleteSupplierAsync(id);
             return true;
+        }
+
+        public async Task<List<SupplierInfoDto>> GetLargestSuppliersAsync()
+        {
+            var result = await _supplierRepository.GetLargestSuppliersAsync();
+            var response = result.Select(x => new SupplierInfoDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                ProductCount = x.ProductCount,
+            }).ToList();
+            return response;
         }
     }
 }

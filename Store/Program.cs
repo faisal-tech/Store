@@ -15,6 +15,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddScoped<IUnitAppService, UnitAppService>();
 builder.Services.AddScoped<IProductAppService, ProductAppService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddScoped<ISupplierAppService, SupplierAppService>();
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -27,6 +37,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 

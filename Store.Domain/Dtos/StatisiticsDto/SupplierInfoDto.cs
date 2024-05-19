@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Store.Application.Contracts.Supplier.Dtos
+namespace Store.Domain.Dtos.StatisiticsDto
 {
-    public class SupplierDto
+    public class SupplierInfoDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -18,7 +18,7 @@ namespace Store.Domain.Entities
         public Supplier Supplier { get; set; }
         public int ReorderLimit { get; set; }
         public int UnitPrice { get; set; }
-        public int SockUnit { get; set; }
+        public int StockUnit { get; set; }
         public int OrderUnit { get; set; }
     }
 }

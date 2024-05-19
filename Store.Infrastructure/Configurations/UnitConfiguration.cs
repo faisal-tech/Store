@@ -11,13 +11,15 @@ namespace Store.Infrastructure.Configurations
 {
 	public class UnitConfiguration : IEntityTypeConfiguration<Unit>
 	{
-		public void Configure(EntityTypeBuilder<Unit> builder)
+		public void Configure(EntityTypeBuilder<Unit> b)
 		{
-			builder.ToTable("Units");
+			b.ToTable("Units");
 
-			builder.HasKey(u => u.Id);
-
-			builder.Property(u => u.Name).IsRequired().HasMaxLength(100);
+			b.HasKey(u => u.Id);
+			b.HasMany(u => u.Products)
+				.WithOne(u => u.Unit)
+				.HasForeignKey(u => u.UnitId);
+			b.Property(u => u.Name).IsRequired().HasMaxLength(100);
 		}
 	}
 }

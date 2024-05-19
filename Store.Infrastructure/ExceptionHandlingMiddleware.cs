@@ -41,7 +41,7 @@ namespace Store.Infrastructure
             context.Response.ContentType = "application/json";
 
 
-            var response = new ApiResponseDto<Object>().IsError(exception.Message);
+            var response = ApiResponseDto<Object>.IsError(exception.Message);
 
             
            

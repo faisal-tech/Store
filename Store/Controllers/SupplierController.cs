@@ -6,10 +6,11 @@ using Store.Application.Contracts.Dtos;
 using Store.Domain.Dtos;
 using Store.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Store.Application.Contracts.Dtos.Statistics;
 
 namespace Store.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class SupplierController : ControllerBase
     {
@@ -27,14 +28,14 @@ namespace Store.Api.Controllers
             if (supplier == null)
                 throw new InvalidOperationException("Supplier was not found");
 
-            return new ApiResponseDto<SupplierDto>().IsSuccess(supplier);
+            return ApiResponseDto<SupplierDto>.IsSuccess(supplier);
         }
 
         [HttpGet]
-        public async Task<ApiResponseDto<List<SupplierDto>>> GetAllSuppliers(SearchFilterDto request)
+        public async Task<ApiResponseDto<PagingDto<SupplierDto>>> SuppliersList([FromQuery] SearchFilterDto request)
         {
             var suppliers = await _supplierAppService.GetAllSuppliersAsync(request);
-            return new ApiResponseDto<List<SupplierDto>>().IsSuccess(suppliers);
+            return ApiResponseDto<PagingDto<SupplierDto>>.IsSuccess(suppliers);
         }
 
         [HttpPost]
@@ -45,7 +46,7 @@ namespace Store.Api.Controllers
             {
                 throw new InvalidOperationException("Internal Server Error");
             }
-            return new ApiResponseDto<bool>().IsSuccess(isCreated);
+            return ApiResponseDto<bool>.IsSuccess(isCreated);
         }
 
         [HttpPut]
@@ -57,7 +58,7 @@ namespace Store.Api.Controllers
                 throw new InvalidOperationException("Internal Server Error");
             }
 
-            return new ApiResponseDto<bool>().IsSuccess(isUpdated);
+            return ApiResponseDto<bool>.IsSuccess(isUpdated);
         }
 
         [HttpDelete("{id}")]
@@ -69,8 +70,15 @@ namespace Store.Api.Controllers
                 throw new InvalidOperationException("Internal Server Error");
             }
 
-            return new ApiResponseDto<bool>().IsSuccess(isDeleted);
+            return ApiResponseDto<bool>.IsSuccess(isDeleted);
 
         }
+        [HttpGet]
+        public async Task<ApiResponseDto<List<SupplierInfoDto>>> GetLargestSupplier()
+        {
+            var suppliers = await _supplierAppService.GetLargestSuppliersAsync();
+            return ApiResponseDto<List<SupplierInfoDto>>.IsSuccess(suppliers);
+        }
+
     }
 }

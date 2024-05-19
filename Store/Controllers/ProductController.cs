@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Store.Application.Contracts.Dtos;
+using Store.Application.Contracts.Dtos.Statistics;
 using Store.Application.Contracts.Product;
 using Store.Application.Contracts.Product.Dtos;
 using Store.Domain.Dtos;
@@ -8,7 +10,7 @@ using Store.Domain.Entities;
 
 namespace Store.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -26,15 +28,14 @@ namespace Store.Api.Controllers
             if (product == null)
                 throw new InvalidOperationException("Product was not found");
 
-            return new ApiResponseDto<ProductDto>().IsSuccess(product);
+            return ApiResponseDto<ProductDto>.IsSuccess(product);
         }
 
-        [HttpPost("ProductsList")]
-        public async Task<ApiResponseDto<List<ProductDto>>> ProductsList(SearchFilterDto request)
+        [HttpGet]
+        public async Task<ApiResponseDto<PagingDto<ProductDto>>> ProductsList([FromQuery]SearchFilterDto request)
         {
-            //throw new InvalidOperationException("This is a test exception.");
             var products = await _productAppService.GetAllProductsAsync(request);
-            return new ApiResponseDto<List<ProductDto>>().IsSuccess(products);
+            return ApiResponseDto<PagingDto<ProductDto>>.IsSuccess(products);
         }
 
         [HttpPost]
@@ -45,8 +46,8 @@ namespace Store.Api.Controllers
             {
                 throw new InvalidOperationException("Internal Server Error");
             }
-            return new ApiResponseDto<bool>().IsSuccess(isSaved);
-        }   
+            return ApiResponseDto<bool>.IsSuccess(isSaved);
+        }
 
         [HttpPut]
         public async Task<ApiResponseDto<bool>> UpdateProduct( [FromBody] UpdateProductDto updateProductDto)
@@ -57,8 +58,8 @@ namespace Store.Api.Controllers
                 throw new InvalidOperationException("Internal Server Error");
             }
 
-            return new ApiResponseDto<bool>().IsSuccess(isUpdated);
-        }
+            return ApiResponseDto<bool>.IsSuccess(isUpdated);
+        }   
 
         [HttpDelete("{id}")]
         public async Task<ApiResponseDto<bool>> DeleteProduct(int id)
@@ -69,7 +70,20 @@ namespace Store.Api.Controllers
             {
                 throw new InvalidOperationException("Internal Server Error");
             }
-            return new ApiResponseDto<bool>().IsSuccess(isDeleted);
+            return ApiResponseDto<bool>.IsSuccess(isDeleted);
+        }
+
+        [HttpGet]
+        public async Task<ApiResponseDto<List<ProductInfo>>> ProductsToReorderAsync()
+        {
+            var products = await _productAppService.GetProductsToReorderAsync();
+            return ApiResponseDto<List<ProductInfo>>.IsSuccess(products);
+        }
+        [HttpGet]
+        public async Task<ApiResponseDto<List<ProductInfo>>> ProductsWithMinimumOrdersAsync()
+        {
+            var products = await _productAppService.GetProductsWithMinimumOrdersAsync();
+            return ApiResponseDto<List<ProductInfo>>.IsSuccess(products);
         }
     }
 }

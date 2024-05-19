@@ -19,16 +19,6 @@ namespace Store.Application.Implementation
             _unitRepository = unitRepository;
         }
 
-        public async Task<UnitDto> GetUnitByIdAsync(int id)
-        {
-            var unit = await _unitRepository.GetUnitByIdAsync(id);
-            return new UnitDto
-            {
-                Id= unit.Id,
-                Name = unit.Name,
-            };
-        }
-
         public async Task<List<UnitDto>> GetAllUnitsAsync()
         {
             var units = await _unitRepository.GetAllUnitsAsync();
@@ -39,29 +29,5 @@ namespace Store.Application.Implementation
             }).ToList();
         }
 
-        public async Task<bool> CreateUnitAsync(CreateUnitDto input)
-        {
-            await _unitRepository.AddUnitAsync(new Unit
-            {
-                Name=input.Name,
-            });
-            return true;
-        }
-
-        public async Task<bool> UpdateUnitAsync(UpdateUnitDto input)
-        {
-            await _unitRepository.UpdateUnitAsync(new Unit
-            {
-                Id = input.Id,
-                Name = input.Name,
-            });
-            return true;
-        }
-
-        public async Task<bool> DeleteUnitAsync(int id)
-        {
-            await _unitRepository.DeleteUnitAsync(id);
-            return true;
-        }
     }
 }
