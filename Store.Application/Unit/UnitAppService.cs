@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Store.Domain.Dtos;
 
-namespace Store.Application.Implementation
+namespace Store.Application.Unit
 {
     public class UnitAppService : IUnitAppService
     {
@@ -19,14 +20,14 @@ namespace Store.Application.Implementation
             _unitRepository = unitRepository;
         }
 
-        public async Task<List<UnitDto>> GetAllUnitsAsync()
+        public async Task<ApiResponseDto<List<UnitDto>>> GetAllUnitsAsync()
         {
             var units = await _unitRepository.GetAllUnitsAsync();
-            return units.Select(x=>new UnitDto
+            return ApiResponseDto<List<UnitDto>>.IsSuccess(units.Select(x => new UnitDto
             {
                 Id = x.Id,
                 Name = x.Name,
-            }).ToList();
+            }).ToList());
         }
 
     }

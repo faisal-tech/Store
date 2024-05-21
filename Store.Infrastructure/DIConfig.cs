@@ -16,7 +16,7 @@ namespace Store.Infrastructure
 	{
 		public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
 		{
-			var connectionString = "Server=.;Database=StoreMOJ;Trusted_Connection=true;encrypt=false;MultipleActiveResultSets=true;TrustServerCertificate=True";
+			var connectionString = configuration.GetConnectionString("DefaultConnection");
 
 			services.AddDbContext<ApplicationDbContext>
 				((serviceProvider, options) =>

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Store.Application.Contracts.Unit.Dtos;
 using Store.Application.Contracts.Unit;
 using Store.Domain.Entities;
-using Store.Application.Contracts.Supplier.Dtos;
 using Store.Domain.Dtos;
 using Store.Domain.Lookups;
 using Store.Infrastructure.Migrations;
@@ -25,8 +24,8 @@ namespace Store.Api.Controllers
         [HttpGet]
         public async Task<ApiResponseDto<List<UnitDto>>> GetAllUnits()
         {
-            var units = await _unitAppService.GetAllUnitsAsync();
-            return ApiResponseDto<List<UnitDto>>.IsSuccess(units);
+            var response = await _unitAppService.GetAllUnitsAsync();
+            return response;
         }
     }
 }

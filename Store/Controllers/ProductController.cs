@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Store.Application.Contract.Product;
+using Store.Application.Contract.Product.Dtos;
 using Store.Application.Contracts.Dtos;
 using Store.Application.Contracts.Dtos.Statistics;
-using Store.Application.Contracts.Product;
-using Store.Application.Contracts.Product.Dtos;
 using Store.Domain.Dtos;
 using Store.Domain.Entities;
 
@@ -24,66 +25,55 @@ namespace Store.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ApiResponseDto<ProductDto>> GetProduct(int id)
         {
-            var product = await _productAppService.GetProductByIdAsync(id);
-            if (product == null)
+            var response = await _productAppService.GetProductByIdAsync(id);
+            if (response == null)
                 throw new InvalidOperationException("Product was not found");
 
-            return ApiResponseDto<ProductDto>.IsSuccess(product);
+			return response;
         }
 
         [HttpGet]
         public async Task<ApiResponseDto<PagingDto<ProductDto>>> ProductsList([FromQuery]SearchFilterDto request)
         {
-            var products = await _productAppService.GetAllProductsAsync(request);
-            return ApiResponseDto<PagingDto<ProductDto>>.IsSuccess(products);
+            var response = await _productAppService.GetAllProductsAsync(request);
+            return response;
         }
 
         [HttpPost]
         public async Task<ApiResponseDto<bool>> CreateProduct([FromBody] CreateProductDto createProductDto)
         {
-            var isSaved = await _productAppService.CreateProductAsync(createProductDto);
-            if (isSaved == false)
-            {
-                throw new InvalidOperationException("Internal Server Error");
-            }
-            return ApiResponseDto<bool>.IsSuccess(isSaved);
+            var response = await _productAppService.CreateProductAsync(createProductDto);
+            
+            return response;
         }
 
         [HttpPut]
         public async Task<ApiResponseDto<bool>> UpdateProduct( [FromBody] UpdateProductDto updateProductDto)
         {
-            var isUpdated = await _productAppService.UpdateProductAsync( updateProductDto);
-            if (isUpdated == false)
-            {
-                throw new InvalidOperationException("Internal Server Error");
-            }
-
-            return ApiResponseDto<bool>.IsSuccess(isUpdated);
+            var response = await _productAppService.UpdateProductAsync( updateProductDto);
+           
+            return response;
         }   
 
         [HttpDelete("{id}")]
         public async Task<ApiResponseDto<bool>> DeleteProduct(int id)
         {
-            var isDeleted = await _productAppService.DeleteProductAsync(id);
+            var response = await _productAppService.DeleteProductAsync(id);
 
-            if (isDeleted == false)
-            {
-                throw new InvalidOperationException("Internal Server Error");
-            }
-            return ApiResponseDto<bool>.IsSuccess(isDeleted);
+            return response;
         }
 
         [HttpGet]
         public async Task<ApiResponseDto<List<ProductInfo>>> ProductsToReorderAsync()
         {
-            var products = await _productAppService.GetProductsToReorderAsync();
-            return ApiResponseDto<List<ProductInfo>>.IsSuccess(products);
+            var response = await _productAppService.GetProductsToReorderAsync();
+            return response;
         }
         [HttpGet]
         public async Task<ApiResponseDto<List<ProductInfo>>> ProductsWithMinimumOrdersAsync()
         {
-            var products = await _productAppService.GetProductsWithMinimumOrdersAsync();
-            return ApiResponseDto<List<ProductInfo>>.IsSuccess(products);
+            var response = await _productAppService.GetProductsWithMinimumOrdersAsync();
+            return response;
         }
     }
 }

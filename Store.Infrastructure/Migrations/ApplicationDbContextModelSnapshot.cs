@@ -91,7 +91,7 @@ namespace Store.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .HasDatabaseName("Index_Name");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Suppliers", (string)null);
                 });
 
             modelBuilder.Entity("Store.Domain.Lookups.Unit", b =>
